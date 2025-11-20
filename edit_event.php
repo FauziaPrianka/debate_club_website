@@ -1,0 +1,198 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin_logged_in'])) {
+    header("Location: login.php");
+    exit();
+}
+
+include "db_connect.php";
+
+if (!isset($_GET['id'])) {
+    die("Event not found!");
+}
+
+$id = $_GET['id'];
+$success = "";
+$error = "";
+
+// Fetch existing event data
+$event = mysqli_query($conn, "SELECT * FROM events WHERE id = $id LIMIT 1");
+$row = mysqli_fetch_assoc($event);
+
+if (!$row) die("Event not found!");
+
+// Update event
+if (isset($_POST['update'])) {
+    $title = $_POST['title'];
+    $description = $_POST['description'];
+    $event_date = $_POST['event_date'];
+    $venue = $_POST['venue'];
+    $register_link = $_POST['register_link'];
+
+    $query = "UPDATE events SET 
+                title = '$title',
+                description = '$description',
+                event_date = '$event_date',
+                venue = '$venue',
+                register_link = '$register_link'
+              WHERE id = $id";
+
+    if (mysqli_query($conn, $query)) {
+        $success = "✔ Event updated successfully!";
+    } else {
+        $error = "❌ Error updating event!";
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Edit Event</title>
+<style>
+   body {
+    font-family: Arial, sans-serif;
+    background: #F1F8E9;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.container {
+    background: white;
+    width: 480px;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #d0e4c6;
+}
+
+h2 {
+    text-align: center;
+    color: #1B5E20;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 15px;
+    display: block;
+    color: #1B5E20;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #9ccc65;
+    margin-top: 6px;
+    font-size: 15px;
+    background: #f9fff5;
+    transition: 0.2s;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #1B5E20;
+    outline: none;
+    box-shadow: 0 0 5px rgba(27, 94, 32, 0.4);
+}
+
+textarea { resize: vertical; }
+
+button {
+    width: 100%;
+    padding: 13px;
+    background: #1B5E20;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    cursor: pointer;
+    margin-top: 22px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: 0.2s;
+}
+button:hover {
+    background: #144519;
+}
+
+.back {
+    margin-top: 16px;
+    display: block;
+    text-align: center;
+    padding: 11px;
+    background: #c2660aff; /* Your requested color */
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.back:hover {
+    background: #9f4f08ff;
+}
+
+.msg-success {
+    color: #1B5E20;
+    background: #d8f5d4;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.msg-error {
+    color: #b71c1c;
+    background: #ffd8d8;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>✏ Edit Event</h2>
+
+    <?php if ($success) echo "<p class='msg-success'>$success</p>"; ?>
+    <?php if ($error) echo "<p class='msg-error'>$error</p>"; ?>
+
+    <form method="POST">
+        <label>Event Title</label>
+        <input type="text" name="title" value="<?= $row['title'] ?>" required>
+
+        <label>Description</label>
+        <textarea name="description" rows="5" required><?= $row['description'] ?></textarea>
+
+        <label>Event Date</label>
+        <input type="date" name="event_date" value="<?= $row['event_date'] ?>" required>
+
+        <label>Venue</label>
+        <input type="text" name="venue" value="<?= $row['venue'] ?>" required>
+
+        <label>Register Link</label>
+        <input type="text" name="register_link" value="<?= $row['register_link'] ?>">
+
+        <button type="submit" name="update">💾 Update Event</button>
+    </form>
+
+    <a class="back" href="manage_events.php">⬅ Back to Manage Events</a>
+</div>
+
+</body>
+</html>

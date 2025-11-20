@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>University Debate Club</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/event_popup.css" />
+  <link rel="stylesheet" href="css/popup.css" />
+  <link rel="stylesheet" href="css/join_us.css" />
+  <link rel="stylesheet" href="css/notice_popup.css">
+  <link rel="stylesheet" href="fontawesome/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo">
+        <img src="assets/images/logo.jpg" alt="Debate Club logo" />
+        <span class="club-name">CCN-UST Debate Club</span>
+      </a>
+
+      <nav class="nav" id="main-nav">
+        <ul>
+          <li><a href="#" class="active">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.php">Events</a></li>
+          <li><a href="achievements.html">Achievements</a></li>
+          <li><a href="members.html">Members</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Open navigation">☰</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h1>Where Voices Meet Logic</h1>
+        <p>Join the University Debate Club — sharpen your argument, think critically, and compete with confidence.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="events.php">Upcoming Events</a>
+          <button class="btn outline" id="openJoinUsBtn">Join Us</button>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <img src="assets/images/hero.jpg" alt="Students debating" />
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="section about">
+    <div class="container">
+      <h2>About Us</h2>
+      <p class="lead">
+        The University Debate Club is a platform for students to express ideas, think critically, and speak confidently.
+        We organize debates, workshops, and competitions to build communication, teamwork, and leadership skills.
+        Join us to share your voice and grow as a confident speaker!
+      </p>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Weekly Debates</h3>
+          <p>Engage in lively discussions and sharpen your speaking skills every week.</p>
+        </div>
+        <div class="card">
+          <h3>Workshops</h3>
+          <p>Learn debating techniques and boost confidence through fun training sessions.</p>
+        </div>
+        <div class="card">
+          <h3>Intervarsity</h3>
+          <p>Compete in national tournaments and represent our university with pride.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- Events Section -->
+  <section id="events" class="section index-events">
+    <div class="container">
+      <h2>Upcoming Events</h2>
+      <div id="indexEventsContainer" class="index-events-list">
+        <!-- Latest 3 events will load here -->
+      </div>
+    </div>
+  </section>
+
+ 
+
+<!-- Achievements Section -->
+<section id="achievements" class="section achievements">
+  <div class="container">
+    <h1>Our Achievements</h1>
+    <p class="lead">See how our members made us proud in national and international events.</p>
+
+    <div id="achievementList" class="achievement-list">
+      <p>Loading achievements...</p>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Moderator + Executive Members Section -->
+  <section id="members" class="section members">
+    <div class="container" >
+
+      <!-- 🔹 Moderator Section -->
+      <h1>Our Moderator</h1>
+      <p>Meet our respected moderator who guides and inspires our debate club!</p>
+
+      <div class="moderator-card" id="moderatorCard">
+        <!-- Moderator data will load dynamically -->
+      </div>
+
+      <hr style="margin: 50px 0; border: none; border-top: 2px solid #c8e6c9;">
+
+      <!-- 🔹 Executive Members -->
+      <h1>Executive Members</h1>
+      <p>Meet our elected leaders who guide the Debate Club!</p>
+
+      <div id="executiveContainer" class="members-row">
+        <!-- Dynamic executive cards from DB -->
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Footer -->
+  <footer id="contact" class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/images/footer.jpg" alt="University Logo" />
+        <h3>CCN-UST Debate Club</h3>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <p>Email: <a href="mailto:debate@university.edu">debate@university.edu</a></p>
+        <p>Follow: <a href="https://www.facebook.com/groups/1166546140147253">Facebook</a> · <a href="https://ccnust.ac.bd/">website</a></p>
+      </div>
+
+      <div class="footer-note">
+        <p>© <span id="year"></span>ByteForce Team. All Rights Reserved.</p>
+        <a href="../admin/login.php" class="admin-login-link">Admin Login</a>
+      </div>
+    </div>
+  </footer>
+
+  
+
+
+  
+<!-- Script -->
+<script src="js/script.js"></script>
+
+<!-- ✅ Join Us Popup Loader -->
+<script>
+document.getElementById("openJoinUsBtn").addEventListener("click", function () {
+  fetch("join_us.php")
+    .then(res => res.text())
+    .then(html => {
+      const popup = document.createElement("div");
+      popup.innerHTML = html;
+      document.body.appendChild(popup);
+
+      const popupEl = document.getElementById("joinusPopup");
+      popupEl.style.display = "flex";
+
+      const closeBtn = document.getElementById("closeJoinUs");
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          popupEl.classList.add("fadeOut");
+          setTimeout(() => popupEl.remove(), 300);
+        };
+      }
+    })
+    .catch(err => console.error("Failed to load Join Us form:", err));
+});
+</script>
+
+<!-- Auto-load latest 3 events dynamically -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const eventsContainer = document.getElementById("indexEventsContainer");
+
+  fetch("get_events.php?limit=3")
+    .then(response => response.json())
+    .then(data => {
+      eventsContainer.innerHTML = "";
+      data.forEach(event => {
+        const card = document.createElement("div");
+        card.classList.add("index-event");
+        card.innerHTML = `
+          <h3>${event.title}</h3>
+          <div class="meta">📅 ${event.event_date} | 📍 ${event.venue}</div>
+          <p>${event.description}</p>
+          <!-- ✅ Updated Register button: redirects to events.php -->
+          <a class="btn primary" href="events.php?register=${encodeURIComponent(event.title)}">Register</a>
+        `;
+        eventsContainer.appendChild(card);
+      });
+    })
+    .catch(error => {
+      eventsContainer.innerHTML = `
+        <p style="text-align:center; color:red;">
+          ⚠️ Failed to load events. Please try again later.
+        </p>`;
+      console.error("Error loading events:", error);
+    });
+});
+</script>
+
+
+
+<!-- Floating Notice Button -->
+<div class="floating-notice-btn" id="openNoticeBtn">
+  <i class="fas fa-bell"></i>
+</div>
+
+<!-- Notice Popup -->
+<div class="notice-popup" id="noticePopup">
+  <div class="notice-content">
+    <button class="close-btn" id="closeNoticeBtn">&times;</button>
+    <h2>📢 Latest Notices</h2>
+    <div id="noticeList">Loading notices...</div>
+  </div>
+</div>
+
+<!-- Notice Script -->
+<script>
+// --- Global Variables ---
+let lastNoticeCount = 0;
+const noticeBtn = document.getElementById('openNoticeBtn');
+const noticePopup = document.getElementById('noticePopup');
+const noticeList = document.getElementById('noticeList');
+
+// --- Load Notices Function ---
+async function loadNotices() {
+  try {
+    const res = await fetch('get_notices.php');
+    const data = await res.json();
+    noticeList.innerHTML = '';
+
+    data.forEach(n => {
+      const div = document.createElement('div');
+      div.classList.add('notice-item');
+      div.innerHTML = `
+        <h3>${n.title}</h3>
+        <p>${n.description}</p>
+        <span class="date">${n.notice_date}</span>
+      `;
+      noticeList.appendChild(div);
+    });
+
+    // --- Check for new notices ---
+    if (data.length > lastNoticeCount) {
+      triggerNoticeAlert();
+    }
+    lastNoticeCount = data.length;
+
+  } catch (error) {
+    console.error('Error loading notices:', error);
+    noticeList.innerHTML = '<p style="color:red;">⚠️ Failed to load notices.</p>';
+  }
+}
+
+// --- Show/Hide Popup ---
+noticeBtn.onclick = () => {
+  noticePopup.classList.add('show');
+  noticeBtn.classList.remove('alert'); // stop alert
+  loadNotices();
+};
+document.getElementById('closeNoticeBtn').onclick = () => {
+  noticePopup.classList.remove('show');
+};
+
+// --- Red Glow + Buzz Effect ---
+function triggerNoticeAlert() {
+  noticeBtn.classList.add('alert');
+  // optional small vibration on supported devices
+  if (window.navigator.vibrate) navigator.vibrate([100, 50, 100]);
+}
+
+// --- Auto Check Every 30s ---
+setInterval(loadNotices, 30000);
+
+// --- Initial Load ---
+loadNotices();
+</script>
+
+<!-- Auto-load Achievements -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("achievementList");
+
+  fetch("get_achievements.php?limit=1")
+    .then(res => res.json())
+    .then(data => {
+      container.innerHTML = "";
+
+      if (data.length === 0) {
+        container.innerHTML = "<p>No achievements added yet.</p>";
+        return;
+      }
+
+      data.forEach(a => {
+        const card = document.createElement("div");
+        card.classList.add("achievement-card");
+        card.innerHTML = `
+        <img src="../admin/uploads/${a.image}" alt="${a.title}">
+          <h3>${a.title}</h3>
+          <p>🏆 ${a.position || "Participant"} — ${a.year || ""}</p>
+          <p>${a.description || ""}</p>
+        `;
+        container.appendChild(card);
+      });
+    })
+    .catch(err => {
+      console.error("Error loading achievements:", err);
+      container.innerHTML = "<p style='color:red;'>⚠️ Failed to load achievements.</p>";
+    });
+});
+</script>
+
+<script>
+
+
+
+// === Load Moderator Data ===
+function loadModerator() {
+    fetch("moderator_data.php")
+      .then(res => res.json())
+      .then(data => {
+        const modContainer = document.getElementById("moderatorCard");
+        if (!data || data.length === 0) {
+          modContainer.innerHTML = "<p style='text-align:center;'>Moderator information not available.</p>";
+          return;
+        }
+        const moderator = data[0];
+        modContainer.innerHTML = `
+          <img src="${moderator.photo}" alt="${moderator.name}">
+          <h3>${moderator.name}</h3>
+          <p class="dept">${moderator.department}</p>
+          <p class="role">${moderator.role}</p>
+        `;
+      })
+      .catch(err => {
+        console.error("Error loading moderator:", err);
+      });
+  }
+// === Load Executive Members ===
+function loadExecutives() {
+  fetch("executive_data.php")
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("executiveContainer");
+      container.innerHTML = "";
+      if (!data.length) {
+        container.innerHTML = "<p>No executive members found.</p>";
+        return;
+      }
+      data.forEach(m => {
+        container.innerHTML += `
+          <div class="member-card">
+            <img src="../admin/uploads/${m.photo}" alt="${m.role}">
+            <h3>${m.name}</h3>
+            <p class="dept">${m.department}</p>
+            <p class="role">${m.role}</p>
+          </div>
+        `;
+      });
+    });
+}
+
+window.onload = function() {
+  loadModerator();
+  loadExecutives();
+};
+</script>
+
+<script>
+window.addEventListener("scroll", function() {
+  const header = document.querySelector(".site-header");
+  if (window.scrollY > 50) {
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
+});
+</script>
+
+
+
+</body>
+</html>

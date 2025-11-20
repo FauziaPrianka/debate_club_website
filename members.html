@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>University Debate Club</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/event_popup.css" />
+  <link rel="stylesheet" href="css/popup.css" />
+  <link rel="stylesheet" href="css/join_us.css" />
+  <link rel="stylesheet" href="css/notice_popup.css">
+  <link rel="stylesheet" href="fontawesome/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo">
+        <img src="assets/images/logo.jpg" alt="Debate Club logo" />
+        <span class="club-name">CCN-UST Debate Club</span>
+      </a>
+
+      <nav class="nav" id="main-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.php">Events</a></li>
+          <li><a href="achievements.html">Achievements</a></li>
+          <li><a href="#" class="active">Members</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Open navigation">☰</button>
+    </div>
+  </header>
+
+<section id="members" class="section members">
+  <div class="container">
+
+    <h1>Our Moderator</h1>
+    <p>Meet our respected moderator who guides and inspires our debate club!</p>
+    <div class="moderator-card" id="moderatorCard"></div>
+
+    <hr style="margin:50px 0; border:none; border-top:2px solid #c8e6c9;">
+
+    <h1>Executive Members</h1>
+    <p>Meet our elected leaders who guide the Debate Club!</p>
+    <div id="executiveContainer" class="members-row"></div>
+  </div>
+</section>
+
+<div class="view-all-container" style="text-align:center; margin-top: 30px;">
+  <button id="viewAllBtn" class="btn primary">View All Members</button>
+</div>
+
+<div id="membersModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>All Registered Members</h2>
+    <div id="membersContainer" class="all-members-grid"></div>
+  </div>
+</div>
+
+<footer id="contact" class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="assets/images/footer.jpg" alt="University Logo" />
+      <h3>CCN-UST Debate Club</h3>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact Us</h4>
+      <p>Email: <a href="mailto:debate@university.edu">debate@university.edu</a></p>
+      <p>Follow: <a href="https://www.facebook.com/groups/1166546140147253">Facebook</a> · <a href="https://ccnust.ac.bd/">Website</a></p>
+    </div>
+    <div class="footer-note">
+      <p>© <span id="year"></span> ByteForce Team. All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+
+<script>
+/* 🔥 Correct image path for all images */
+const imagePath = "../admin/uploads/";
+
+
+/* Popup Controls */
+const modal = document.getElementById("membersModal");
+const btn = document.getElementById("viewAllBtn");
+const span = document.querySelector(".close-btn");
+const container = document.getElementById("membersContainer");
+
+btn.onclick = () => {
+  modal.style.display = "block";
+  document.body.classList.add("modal-open");
+  loadMembers();
+};
+span.onclick = () => modal.style.display = "none";
+window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+/* Load All Members */
+function loadMembers() {
+  fetch("members_data.php")
+    .then(res => res.json())
+    .then(list => {
+      container.innerHTML = "";
+      list.forEach(m => {
+      const img = m.photo || "assets/images/default.png";
+        container.innerHTML += `
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front" style="background-image:url('${img}')">
+                <div class="card-info">
+                  <h3>${m.name}</h3>
+                  <p>${m.department}</p>
+                  <p>Semester: ${m.semester}</p>
+                </div>
+              </div>
+              <div class="flip-card-back">
+                <img src="${img}" alt="${m.name}">
+              </div>
+            </div>
+          </div>`;
+      });
+    });
+}
+
+/* Load Executive Members */
+function loadExecutiveMembers() {
+  fetch("executive_data.php")
+    .then(res => res.json())
+    .then(list => {
+      const div = document.getElementById("executiveContainer");
+      div.innerHTML = "";
+      list.forEach(member => {
+        const img = member.photo ? imagePath + member.photo : "assets/images/default.png";
+        div.innerHTML += `
+          <div class="member-card">
+            <img src="${img}" alt="${member.role}">
+            <h3>${member.name}</h3>
+            <p class="dept">${member.department}</p>
+            <p class="role">${member.role}</p>
+          </div>`;
+      });
+    });
+}
+
+/* Load Moderator */
+function loadModerator() {
+  fetch("moderator_data.php")
+    .then(res => res.json())
+    .then(list => {
+      if (!list.length) return;
+      const mod = list[0];
+      const div = document.getElementById("moderatorCard");
+      const img = mod.photo ? mod.photo : "assets/images/default.png";
+      div.innerHTML = `
+        <img src="${img}" alt="${mod.name}">
+        <h3>${mod.name}</h3>
+        <p class="dept">${mod.department}</p>
+        <p class="role">${mod.role}</p>
+      `;
+    });
+}
+
+window.onload = () => {
+  loadModerator();
+  loadExecutiveMembers();
+};
+</script>
+
+
+<script>
+window.addEventListener("scroll", function () {
+  const header = document.querySelector(".site-header");
+  if (window.scrollY > 20) {
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievements | University Debate Club</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/popup.css" />
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="assets/images/logo.jpg" alt="Club Logo" />
+        <span class="club-name">University Debate Club</span>
+      </a>
+
+      <nav class="nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.php">Events</a></li>
+          <li><a href="achievements.html" class="active">Achievements</a></li>
+          <li><a href="members.html">Members</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Achievements Section -->
+  <section class="section achievements">
+    <div class="container">
+      <h1>Our Achievements</h1>
+      <p class="lead">Here are some of the proud moments and successes of our club members.</p>
+
+      <div class="achievement-list" id="achievement-list">
+        <!-- Cards will be loaded here dynamically -->
+      </div>
+
+      <!-- View All Button -->
+      <div class="view-all-container">
+        <button class="btn primary" onclick="openPopup()">View All Achievements →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popup for All Achievements -->
+  <div id="achievementPopup" class="popup-overlay">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup()">&times;</span>
+      <h2>All Achievements</h2>
+      <div id="popup-achievement-grid" class="popup-achievement-grid">
+        <!-- Dynamic cards will load here -->
+      </div>
+    </div>
+  </div>
+
+
+
+  
+
+<!-- Gallery Section -->
+<section class="section gallery-section">
+  <div class="container">
+    <h2>Gallery</h2>
+    <p class="lead">A glimpse of our debate events, awards, and memorable moments.</p>
+
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- Latest 8 images will be loaded dynamically -->
+    </div>
+
+    <div class="view-all-container">
+      <button class="btn primary" onclick="openGalleryPopup()">View All Photos →</button>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Popup -->
+<div id="galleryPopup" class="popup-overlay">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closeGalleryPopup()">&times;</span>
+    <h2>Gallery Album</h2>
+    <div id="popup-gallery-grid" class="popup-gallery-grid">
+      <!-- All gallery images will load here -->
+    </div>
+  </div>
+</div>
+
+ <!-- Footer -->
+  <footer id="contact" class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/images/footer.jpg" alt="University Logo" />
+        <h3>CCN-UST Debate Club</h3>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <p>Email: <a href="mailto:debate@university.edu">debate@university.edu</a></p>
+        <p>Follow: <a href="https://www.facebook.com/groups/1166546140147253">Facebook</a> · <a href="https://ccnust.ac.bd/">website</a></p>
+      </div>
+
+      <div class="footer-note">
+        <p>© <span id="year"></span>ByteForce Team. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+
+
+
+
+
+
+
+
+  <!-- JavaScript -->
+
+  <script>
+  const yearSpan = document.getElementById('year');
+yearSpan.textContent = new Date().getFullYear();
+</script>
+  <!-- Load only top achievements on the main page -->
+<script>
+fetch('get_achievements.php?limit=3')
+  .then(response => response.json())
+  .then(data => {
+    const list = document.getElementById('achievement-list');
+    list.innerHTML = '';
+
+    data.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'achievement-card';
+      card.innerHTML = `
+        <h3>${item.title} ${item.year ? `(${item.year})` : ''}</h3>
+        <p>${item.description}</p>
+      `;
+      list.appendChild(card);
+    });
+  })
+  .catch(err => console.error('Error loading achievements:', err));
+</script>
+
+<!-- Updated popup logic (with scroll lock fix) -->
+<script>
+function openPopup() {
+  const popup = document.getElementById("achievementPopup");
+  popup.style.display = "flex";
+
+  //Disable background scrolling
+  document.body.style.overflow = "hidden";
+
+  // Load *all* achievements dynamically
+  fetch("get_achievements.php")
+    .then(response => response.json())
+    .then(data => {
+      const grid = document.getElementById("popup-achievement-grid");
+      grid.innerHTML = "";
+
+      data.forEach(item => {
+        const card = `
+          <div class="flip-card">
+            <div class="flip-inner">
+              <div class="flip-front">
+              <img src="../admin/uploads/${item.image}" alt="${item.title}" onerror="this.src='images/no_image.png'">
+              </div>
+              <div class="flip-back">
+                <h3>${item.title}</h3>
+                <p>${item.description}</p>
+                <p><strong>Year:</strong> ${item.year}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += card;
+      });
+    })
+    .catch(error => console.error("Error loading all achievements:", error));
+}
+
+function closePopup() {
+  const popup = document.getElementById("achievementPopup");
+  popup.style.display = "none";
+
+  // ✅ Re-enable background scrolling
+  document.body.style.overflow = "auto";
+}
+
+// Close popup when clicking outside
+window.onclick = function(event) {
+  const popup = document.getElementById("achievementPopup");
+  if (event.target === popup) {
+    popup.style.display = "none";
+    document.body.style.overflow = "auto"; // restore scroll
+  }
+};
+</script>
+
+
+<!--Gallery Dynamic Loading & Popup -->
+<script>
+// Load only the latest 8 gallery photos dynamically
+fetch('get_gallery.php?limit=8')
+  .then(res => res.json())
+  .then(data => {
+    const grid = document.getElementById('gallery-grid');
+    grid.innerHTML = '';
+    data.forEach(item => {
+      // Ensure proper path reference
+const imageSrc = item.image_path.startsWith('assets/')
+  ? item.image_path
+  : `assets/images/${item.image_path}`;
+
+grid.innerHTML += `
+  <div class="album-card">
+    <img src="../admin/uploads/${item.image_path}" alt="${item.title || 'Gallery Image'}">
+    <div class="album-overlay">
+      <p>${item.title || 'Photo'}</p>
+    </div>
+  </div>`;
+
+
+    });
+  })
+  .catch(err => console.error('Error loading gallery:', err));
+
+
+// Open full gallery popup
+function openGalleryPopup() {
+  const popup = document.getElementById('galleryPopup');
+  popup.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; // prevent background scroll
+
+  fetch('get_gallery.php')
+    .then(res => res.json())
+    .then(data => {
+      const grid = document.getElementById('popup-gallery-grid');
+      grid.innerHTML = '';
+
+      data.forEach(item => {
+        grid.innerHTML += `
+  <div class="album-card">
+    <img src="../admin/uploads/${item.image_path}" alt="${item.title || 'Gallery Image'}"
+         onerror="this.src='assets/images/no_image.png'">
+    <div class="album-overlay">
+      <p>${item.title || 'Photo'}</p>
+    </div>
+  </div>`;
+
+      });
+    })
+    .catch(err => console.error('Error loading full gallery:', err));
+}
+
+
+// Close popup
+function closeGalleryPopup() {
+  document.getElementById('galleryPopup').style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+
+// Close popup when clicking outside the popup content
+window.onclick = function(e) {
+  const popup = document.getElementById('galleryPopup');
+  if (e.target === popup) {
+    popup.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+};
+</script>
+
+
+<script>
+window.addEventListener("scroll", function () {
+  const header = document.querySelector(".site-header");
+  if (window.scrollY > 50) {
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
+});
+</script>
+
+
+</body>
+</html>
